@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>GreenCell — Painel de Serviços e Receita</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--bg:#f6f6f9;--card:#fff;--fg:#17172b;--mut:#6b6b80;--bd:#e5e5ee;--soft:#eafaf5;--pri:#16a37f;--c1:#6244e8;--c2:#16a37f;--c3:#e5693d;--c4:#9aa0b5;--profit:#16a37f;--cost:#d9482b;--pend:#b7791f;--r:12px}
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 Manrope,system-ui,sans-serif;background:var(--bg);color:var(--fg);-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+.app{display:flex;min-height:100vh;flex-direction:column}
+aside{width:100%;background:var(--card);border-bottom:1px solid var(--bd);display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:10px 16px;flex-shrink:0;position:sticky;top:0;z-index:10}
+.brand{padding:6px 0;font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px}
+.brand i{width:32px;height:32px;border-radius:8px;background:var(--c2);color:#fff;display:grid;place-items:center;font-style:normal;font-size:14px}
+.brand b{color:var(--c2)}
+.ws,.acc{display:none}
+nav{display:flex;padding:0;gap:4px;overflow-x:auto}nav h6{display:none}
+.nav{display:flex;align-items:center;gap:6px;background:none;border:0;border-radius:8px;height:36px;padding:0 10px;color:var(--mut);font-weight:600;white-space:nowrap;font-size:13px}
+.nav:hover{background:var(--bg)}.nav.on{background:var(--soft);color:var(--pri)}.nav em{font-style:normal;font-size:10px;background:var(--bg);padding:1px 5px;border-radius:4px}
+.main{flex:1;min-width:0;width:100%}
+header{height:56px;padding:0 16px;background:var(--card);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;font-size:12px}
+header .sv{display:flex;gap:6px;align-items:center;color:var(--mut)}header .sv:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--profit)}
+main{padding:16px;max-width:1280px;margin:0 auto}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-direction:column;margin-bottom:20px}
+h1{margin:0;font-size:22px;font-weight:800}.hd p{margin:4px 0 0;color:var(--mut);font-size:12px}
+.hd-actions{display:flex;gap:8px;width:100%}
+.hd-actions .btn{flex:1;text-align:center}
+.btn{border:1px solid var(--bd);background:var(--card);border-radius:9px;padding:10px 14px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}.btn.d{background:var(--cost);border-color:var(--cost);color:#fff}.btn:hover{filter:brightness(.96)}.btn:disabled{opacity:.5;cursor:default}
+.ic{border:0;background:none;color:var(--mut);padding:8px;border-radius:6px}.ic:hover{background:var(--bg);color:var(--fg)}
+.alert{color:var(--cost);margin:0 0 16px}
+.note{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--bd);background:var(--card);border-radius:10px;padding:10px 12px;color:var(--mut);font-size:12px;margin-bottom:16px}
+.row{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:12px}h2{margin:0;font-size:14px;font-weight:700}
+.row select{width:100%}
+select,input{background:var(--card);border:1px solid var(--bd);border-radius:9px;padding:10px 12px;font-size:14px;width:100%}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r)}
+.kpi{padding:14px}.kpi span{color:var(--mut);font-size:11px;font-weight:500}.kpi p{margin:6px 0 4px;font-size:20px;font-weight:800;letter-spacing:-.02em}.kpi small{color:var(--mut);font-size:10px}
+.kpis article:last-child{grid-column:span 2}
+.grid{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px}
+.pn{padding:16px}.pn h2{font-size:14px}.pn>p{margin:2px 0 10px;color:var(--mut);font-size:11px}
+.lg{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-bottom:8px}.lg i,.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+svg text{fill:var(--mut);font-size:10px;font-family:inherit}
+.donut{position:relative;width:160px;height:160px;margin:0 auto 10px}.donut div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:var(--mut)}.donut b{font-size:15px;color:var(--fg)}
+.dl p{display:flex;align-items:center;gap:6px;margin:6px 0;font-size:11px}.dl span{flex:1;color:var(--mut)}
+.tp{overflow:hidden}.tp .top{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 0;gap:8px;flex-wrap:wrap}.tp .tb{display:flex;flex-direction:column;gap:8px;padding:12px 16px}
+.tp .tb input{width:100%!important}
+.cnt{background:var(--bg);color:var(--mut);border-radius:6px;padding:1px 6px;font-size:10px;margin-left:6px}
+.ov{overflow-x:auto;-webkit-overflow-scrolling:touch}table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;font-size:10px;color:var(--mut);font-weight:600;padding:8px 12px;border-block:1px solid var(--bd);background:var(--bg);white-space:nowrap}
+th button{background:none;border:0;padding:0;font-weight:600;color:inherit}td{padding:12px;border-bottom:1px solid var(--bd);white-space:nowrap}tr:last-child td{border:0}
+.cl{display:flex;align-items:center;gap:8px;font-weight:700}.cl i{width:24px;height:24px;border-radius:6px;background:var(--soft);color:var(--pri);display:grid;place-items:center;font-style:normal;font-size:10px}
+.tag{background:var(--bg);border-radius:6px;padding:2px 8px;font-size:11px}.m{color:var(--mut)}.pf{color:var(--profit);font-weight:700}.ls{color:var(--cost);font-weight:700}
+.s{display:inline-flex;align-items:center;gap:4px;border-radius:99px;padding:2px 8px;font-size:10px;font-weight:600}.s:before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor}
+.s.Completed{color:var(--profit);background:color-mix(in srgb,var(--profit) 14%,transparent)}.s.Pending{color:var(--pend);background:color-mix(in srgb,var(--pend) 14%,transparent)}.s.InProgress{color:var(--pri);background:var(--soft)}
+.empty{text-align:center;padding:32px}.empty p{margin:4px 0}
+.pg{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-size:11px;color:var(--mut);gap:8px;flex-wrap:wrap}.pg div{display:flex;gap:6px;align-items:center}
+footer{display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:20px;font-size:10px;color:var(--mut);gap:4px;padding-bottom:20px}
+dialog{border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--fg);padding:20px;width:calc(100% - 24px);max-width:420px;margin:auto}dialog::backdrop{background:rgba(10,10,25,.5)}
+dialog h3{margin:0 0 4px;font-size:16px}dialog>p,dialog form>p{margin:0 0 14px;color:var(--mut);font-size:12px}
+label{display:block;font-size:11px;font-weight:600;margin-bottom:12px}label input,label select{display:block;width:100%;margin-top:4px}
+.g2{display:grid;grid-template-columns:1fr;gap:10px}.act{display:flex;gap:8px;margin-top:10px;width:100%}.act button{flex:1}
+
+@media(min-width:768px){
+  .app{flex-direction:row}
+  aside{width:236px;height:100vh;flex-direction:column;align-items:stretch;border-bottom:0;border-right:1px solid var(--bd);position:sticky;top:0;padding:0}
+  .brand{padding:26px 24px;font-size:22px}
+  .ws,.acc{display:flex}
+  .ws{margin:0 16px 22px;border:1px solid var(--bd);border-radius:10px;padding:10px 12px}.ws p,.acc p{margin:0}.ws small,.acc small{color:var(--mut);font-size:11px}
+  nav{flex-direction:column;padding:0 16px;overflow-x:visible}nav h6{display:block;margin:0 12px 10px;font-size:11px;color:var(--mut);font-weight:600}
+  .nav{width:100%;height:42px;padding:0 13px;font-size:14px}.nav em{font-size:11px}
+  .acc{margin-top:auto;border-top:1px solid var(--bd);padding:18px 20px;gap:10px;align-items:center}
+  .av{width:34px;height:34px;border-radius:50%;background:var(--soft);color:var(--pri);display:grid;place-items:center;font-size:11px;font-weight:700}
+  header{height:70px;padding:0 32px}
+  main{padding:30px 32px}
+  .hd{flex-direction:row;align-items:center}
+  .hd-actions{width:auto}
+  .hd-actions .btn{flex:unset}
+  .row{flex-direction:row;align-items:center}
+  .row select{width:auto}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+  .kpis article:last-child{grid-column:unset}
+  .kpi{padding:16px 18px}.kpi span{font-size:12px}.kpi p{font-size:22px}.kpi small{font-size:11px}
+  .grid{grid-template-columns:2fr 1fr;gap:16px}
+  .pn{padding:20px}
+  .tp .tb{flex-direction:row;justify-content:space-between;padding:16px 20px}
+  .tp .tb input{width:min(260px,100%)!important}
+  footer{flex-direction:row;justify-content:space-between;text-align:left;font-size:11px}
+  .g2{grid-template-columns:1fr 1fr;gap:14px}
+  .act{width:auto}
+  .act button{flex:unset}
+}
+@media(prefers-reduced-motion:no-preference){main{animation:in .35s ease-out}@keyframes in{from{opacity:0;transform:translateY(6px)}}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<dialog id="dlg"><form id="frm">
+<h3 id="dt"></h3><p>Informe os dados do cliente e do projeto.</p>
+<label>Nome do cliente<input id="fc" required placeholder="ex.: Estúdio Acme"></label>
+<label>Serviço prestado<input id="fs" required list="svc"><datalist id="svc"></datalist></label>
+<div class="g2"><label>Preço de custo (R$)<input id="fk" type="number" required min="0" step="0.01" value="0"></label><label>Preço de venda (R$)<input id="fp" type="number" required min="0" step="0.01" value="0"></label></div>
+<label>Lucro<input id="fl" readonly></label>
+<div class="g2"><label>Data<input id="fd" type="date" required></label><label>Status<select id="ft"></select></label></div>
+<div class="act"><button type="button" class="btn" data-a="close">Cancelar</button><button type="submit" class="btn p" id="fsub">Adicionar serviço</button></div>
+</form></dialog>
+
+<dialog id="del"><h3>Excluir serviço?</h3><p id="dm"></p><div class="act"><button type="button" class="btn" data-a="close">Cancelar</button><button type="button" class="btn d" id="dok">Excluir serviço</button></div></dialog>
+
+<!-- SDKs do Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCYUpBtpDp1U6e7v013OwAUmKEV-C9ziSw",
+  authDomain: "greencell-a5ba3.firebaseapp.com",
+  databaseURL: "https://greencell-a5ba3-default-rtdb.firebaseio.com",
+  projectId: "greencell-a5ba3",
+  storageBucket: "greencell-a5ba3.firebasestorage.app",
+  messagingSenderId: "787139352409",
+  appId: "1:787139352409:web:04cc0a7e82a45f7ef69e48",
+  measurementId: "G-FW5WRRXQ8F"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const ST={Completed:'Concluído','In Progress':'Em andamento',Pending:'Pendente'},CATS=['Desenvolvimento','Design','Consultoria','Manutenção'],
+LEG={Development:'Desenvolvimento',Consulting:'Consultoria',Maintenance:'Manutenção'},COL=['var(--c1)','var(--c2)','var(--c3)','var(--c4)'],PS=6,
+VIEWS=['Visão geral','Serviços','Clientes','Relatórios'];
+
+const S={recs:[],notice:'',sample:false,q:'',st:'all',per:'all',view:'Visão geral',page:1,k:'date',asc:false,edit:null,del:null};
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v);
+const fm=m=>new Date(+m.slice(0,4),+m.slice(5,7)-1,1).toLocaleDateString('pt-BR',{month:'short'}).replace('.','');
+const fd=d=>d && d.length>=10 ? `${d.slice(8,10)} ${fm(d.slice(0,7))} ${d.slice(0,4)}` : d, fmy=m=>`${fm(m)} ${m.slice(0,4)}`;
+const M=r=>{const v=r.reduce((s,x)=>s+x.price,0),c=r.reduce((s,x)=>s+x.cost,0);return{rev:v,cost:c,profit:v-c,margin:v?(v-c)/v*100:0,n:r.length}};
+
+async function carregarDados() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "servicos"));
+    S.recs = [];
+    querySnapshot.forEach((docSnap) => {
+      S.recs.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    if(S.recs.length === 0) S.sample = true;
+    render();
+  } catch (error) {
+    console.error(error);
+    S.notice = 'Erro ao carregar dados do Firebase.';
+    render();
+  }
+}
+
+const scoped=()=>S.recs.filter(r=>S.per==='all'||r.date.startsWith(S.per));
+const val=(r,k)=>k==='profit'?r.price-r.cost:r[k];
+function filtered(){const q=S.q.toLowerCase();return scoped().filter(r=>(r.client+' '+r.service).toLowerCase().includes(q)&&(S.st==='all'||r.status===S.st)).sort((a,b)=>{const x=val(a,S.k),y=val(b,S.k),c=typeof x==='number'?x-y:String(x).localeCompare(String(y));return S.asc?c:-c})}
+
+function bars(sc){const ms=[...new Set(S.recs.map(r=>r.date.slice(0,7)))].sort().filter(m=>S.per==='all'||m===S.per),d=ms.map(m=>({m,...M(sc.filter(r=>r.date.startsWith(m)))})),mx=Math.max(1,...d.map(x=>Math.max(x.rev,x.profit,x.cost))),W=600,H=230,L=46,B=26,gw=(W-L)/Math.max(1,d.length),bw=Math.min(18,gw/4);
+let o=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Receita, lucro e custo por mês">`;
+for(let i=0;i<=4;i++){const y=H-B-(H-B-8)*i/4;o+=`<line x1="${L}" x2="${W}" y1="${y}" y2="${y}" stroke="var(--bd)" stroke-dasharray="3 4"/><text x="${L-8}" y="${y+4}" text-anchor="end">${Math.round(mx*i/4/1000*10)/10}k</text>`}
+d.forEach((x,i)=>{const cx=L+gw*i+gw/2;[x.rev,x.profit,x.cost].forEach((v,j)=>{const h=Math.max(0,v)/mx*(H-B-8);o+=`<rect x="${cx+(j-1.5)*(bw+3)+bw/2}" y="${H-B-h}" width="${bw}" height="${h}" rx="3" fill="${COL[j]}"><title>${['Receita','Lucro','Custo'][j]}: ${brl(v)}</title></rect>`});o+=`<text x="${cx}" y="${H-6}" text-anchor="middle">${fm(x.m)}</text>`});
+return o+'</svg>'}
+
+function donut(sc,t){const b=CATS.map(n=>({n,v:sc.filter(r=>r.service===n).reduce((s,r)=>s+r.price,0)})),o=sc.filter(r=>!CATS.includes(r.service)).reduce((s,r)=>s+r.price,0);if(o)b.push({n:'Outros',v:o});
+const C=2*Math.PI*40;let off=0,arcs='';b.forEach((x,i)=>{if(x.v>0){const l=x.v/t.rev*C;arcs+=`<circle cx="50" cy="50" r="40" fill="none" stroke="${COL[i%4]}" stroke-width="9" stroke-dasharray="${Math.max(0,l-2)} ${C-l+2}" stroke-dashoffset="${-off}"/>`;off+=l}});
+return`<div class="donut"><svg viewBox="0 0 100 100" width="160" height="160" style="transform:rotate(-90deg)"><circle cx="50" cy="50" r="40" fill="none" stroke="var(--bd)" stroke-width="9" opacity="${t.rev?0:1}"/>${arcs}</svg><div><span>Receita total</span><b>${brl(t.rev)}</b><span>${t.n} ${t.n===1?'serviço':'serviços'}</span></div></div><div class="dl">${b.map((x,i)=>`<p><i class="dot" style="background:${COL[i%4]}"></i><span>${x.n}</span><b>${brl(x.v)}</b><span style="flex:0;min-width:34px;text-align:right">${t.rev?Math.round(x.v/t.rev*100):0}%</span></p>`).join('')}</div>`}
+
+function rowsHtml(){const f=filtered(),pc=Math.max(1,Math.ceil(f.length/PS)),pg=Math.min(S.page,pc),rs=f.slice((pg-1)*PS,pg*PS);
+const cols=[['client','Nome do cliente'],['service','Serviço'],['cost','Preço de custo'],['price','Preço de venda'],['profit','Lucro'],['date','Data'],['status','Status']];
+return`<div class="ov"><table><thead><tr>${cols.map(c=>`<th><button data-a="sort" data-k="${c[0]}">${c[1]} ↕</button></th>`).join('')}<th aria-label="Ações"></th></tr></thead><tbody>${rs.map(r=>`<tr><td><div class="cl"><i>${esc(r.client.slice(0,1))}</i>${esc(r.client)}</div></td><td><span class="tag">${esc(r.service)}</span></td><td class="m">${brl(r.cost)}</td><td><b>${brl(r.price)}</b></td><td class="${r.price>=r.cost?'pf':'ls'}">${brl(r.price-r.cost)}</td><td class="m">${fd(r.date)}</td><td><span class="s ${r.status.replace(' ','')}">${ST[r.status]}</span></td><td><button class="ic" data-a="edit" data-id="${esc(r.id)}" title="Editar" aria-label="Editar">✎</button><button class="ic" data-a="del" data-id="${esc(r.id)}" title="Excluir" aria-label="Excluir">🗑</button></td></tr>`).join('')}</tbody></table>${rs.length?'':`<div class="empty"><p><b>Nenhum serviço encontrado</b></p></div>`}</div>
+<div class="pg"><span>Mostrando ${f.length?(pg-1)*PS+1:0}–${Math.min(pg*PS,f.length)} de ${f.length} serviços</span><div><button class="btn" data-a="pg" data-d="-1" ${pg===1?'disabled':''}>‹</button><span>${pg} / ${pc}</span><button class="btn" data-a="pg" data-d="1" ${pg===pc?'disabled':''}>›</button></div></div>`}
+
+function render(){const sc=scoped(),t=M(sc),v=S.view,done=sc.filter(r=>r.status==='Completed').length,ms=[...new Set(S.recs.map(r=>r.date.slice(0,7)))].sort(),
+kp=[['Receita total',brl(t.rev),'Em todos os serviços'],['Custo total',brl(t.cost),'Despesas do negócio'],['Lucro líquido',brl(t.profit),'Receita menos custos'],['Margem de lucro',t.margin.toFixed(1).replace('.',',')+'%','Rentabilidade geral'],['Total de serviços',String(t.n).padStart(2,'0'),done+' concluídos']];
+const cl=[...new Set(sc.map(r=>r.client))];
+$('#app').innerHTML=`<div class="app"><aside><div class="brand"><i>G</i><span>Green<b>Cell</b></span></div><div class="ws"><p><b>Espaço do estúdio</b></p><small>Online (Firebase)</small></div><nav>${VIEWS.map(n=>`<button class="nav ${v===n?'on':''}" data-a="view" data-v="${n}">${n}${n==='Serviços'?`<em>${S.recs.length}</em>`:''}</button>`).join('')}</nav><div class="acc"><span class="av">GC</span><div><p><b>Online</b></p><small>Sincronizado</small></div></div></aside>
+<div class="main"><header><span class="m">Espaço de trabalho › <b style="color:var(--fg)">${v}</b></span><span class="sv">Salvo na Nuvem</span></header><main>
+<div class="hd"><div><h1>${v==='Visão geral'?'Visão geral do negócio':v}</h1><p>Painel sincronizado em tempo real.</p></div><div class="hd-actions"><button class="btn" data-a="csv">Exportar</button> <button class="btn p" data-a="new">+ Adicionar</button></div></div>
+${S.notice?`<p role="alert" class="alert">${S.notice}</p>`:''}
+<div class="row"><h2>Desempenho</h2><select id="per"><option value="all">Todo o período</option>${ms.map(m=>`<option value="${m}" ${S.per===m?'selected':''}>${fmy(m)}</option>`).join('')}</select></div>
+<section class="kpis">${kp.map((k,i)=>`<article class="card kpi"><span>${k[0]}</span><p ${i===2?'style="color:var(--profit)"':''}>${k[1]}</p><small>${k[2]}</small></article>`).join('')}</section>
+${v==='Serviços'||v==='Clientes'?'':`<section class="grid"><article class="card pn"><h2>Visão geral da receita</h2><div class="lg">${['Receita','Lucro','Custo'].map((s,i)=>`<span><i style="background:${COL[i]}"></i>${s}</span>`).join('')}</div>${bars(sc)}</article><article class="card pn"><h2>Receita por serviço</h2>${donut(sc,t)}</article></section>`}
+${v==='Clientes'?`<section class="card tp"><div class="top"><h2>Seus clientes</h2></div><div class="ov"><table><thead><tr><th>Cliente</th><th>Serviços</th><th>Receita</th><th>Lucro líquido</th></tr></thead><tbody>${cl.map(c=>{const m=M(sc.filter(r=>r.client===c));return`<tr><td><b>${esc(c)}</b></td><td>${m.n}</td><td>${brl(m.rev)}</td><td class="pf">${brl(m.profit)}</td></tr>`}).join('')}</tbody></table></div></section>`:
+`<section class="card tp"><div class="top"><h2>Serviços<span class="cnt">${sc.length}</span></h2></div><div class="tb"><input id="q" type="search" placeholder="Buscar clientes ou serviços..." value="${esc(S.q)}"><select id="st"><option value="all">Todos os status</option>${Object.keys(ST).map(s=>`<option value="${s}" ${S.st===s?'selected':''}>${ST[s]}</option>`).join('')}</select></div><div id="rows">${rowsHtml()}</div></section>`}
+<footer><span>GreenCell Cloud</span><span>BRL</span></footer></main></div></div>`}
+
+function openModal(r){
+  S.edit = r ? r.id : null;
+  $('#dt').textContent = r ? 'Editar serviço' : 'Adicionar serviço';
+  $('#fsub').textContent = r ? 'Salvar alterações' : 'Adicionar serviço';
+  $('#svc').innerHTML = CATS.map(c=>`<option value="${c}">`).join('');
+  $('#ft').innerHTML = ['Pending','In Progress','Completed'].map(s=>`<option value="${s}">${ST[s]}</option>`).join('');
+  $('#fc').value = r ? r.client : '';
+  $('#fs').value = r ? r.service : CATS[0];
+  $('#fk').value = r ? r.cost : 0;
+  $('#fp').value = r ? r.price : 0;
+  $('#fd').value = r ? r.date : new Date().toLocaleDateString('sv-SE');
+  $('#ft').value = r ? r.status : 'Pending';
+  calcProfit();
+  $('#dlg').showModal();
+  $('#fc').focus();
+}
+
+const calcProfit = () => {
+  $('#fl').value = brl((+$('#fp').value || 0) - (+$('#fk').value || 0));
+};
+$('#fk').addEventListener('input', calcProfit);
+$('#fp').addEventListener('input', calcProfit);
+
+$('#frm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = S.edit || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+  const r = {
+    client: $('#fc').value.trim(),
+    service: $('#fs').value.trim(),
+    cost: Number($('#fk').value) || 0,
+    price: Number($('#fp').value) || 0,
+    date: $('#fd').value,
+    status: $('#ft').value
+  };
+  if(!r.client || !r.service || !r.date) return;
+  
+  try {
+    await setDoc(doc(db, "servicos", id), r, { merge: true });
+    $('#dlg').close();
+    await carregarDados();
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao salvar dados no Firebase. Verifique a consola.");
+  }
+});
+
+$('#dok').addEventListener('click', async () => {
+  if(S.del){
+    try {
+      await deleteDoc(doc(db, "servicos", S.del.id));
+      S.del = null;
+      $('#del').close();
+      await carregarDados();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao excluir do Firebase.");
+    }
+  }
+});
+
+function csv(){
+  const l=[['Cliente','Serviço','Custo','Preço de venda','Lucro','Data','Status'],...filtered().map(r=>[r.client,r.service,r.cost,r.price,r.price-r.cost,r.date,ST[r.status]])];
+  const t=l.map(x=>x.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
+  const u=URL.createObjectURL(new Blob(['\uFEFF'+t],{type:'text/csv;charset=utf-8'}));
+  const a=document.createElement('a');a.href=u;a.download='greencell-servicos.csv';a.click();URL.revokeObjectURL(u);
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-a]');
+  if(!b) return;
+  const act = b.dataset.a;
+  const dataset = b.dataset;
+
+  if(act === 'close'){
+    b.closest('dialog').close();
+  } else if(act === 'view'){
+    S.view = dataset.v;
+    S.q = '';
+    S.page = 1;
+    render();
+  } else if(act === 'new'){
+    openModal();
+  } else if(act === 'csv'){
+    csv();
+  } else if(act === 'edit'){
+    const item = S.recs.find(r => r.id === dataset.id);
+    if(item) openModal(item);
+  } else if(act === 'del'){
+    S.del = S.recs.find(r => r.id === dataset.id);
+    if(S.del){
+      $('#dm').textContent = `Remover registro de ${S.del.client}?`;
+      $('#del').showModal();
+    }
+  } else if(act === 'sort'){
+    S.asc = S.k === dataset.k ? !S.asc : true;
+    S.k = dataset.k;
+    $('#rows').innerHTML = rowsHtml();
+  } else if(act === 'pg'){
+    S.page = Math.max(1, S.page + +dataset.d);
+    $('#rows').innerHTML = rowsHtml();
+  }
+});
+
+document.addEventListener('input', e => {
+  if(e.target.id === 'q'){
+    S.q = e.target.value;
+    S.page = 1;
+    $('#rows').innerHTML = rowsHtml();
+  }
+});
+
+document.addEventListener('change', e => {
+  if(e.target.id === 'st'){
+    S.st = e.target.value;
+    S.page = 1;
+    $('#rows').innerHTML = rowsHtml();
+  } else if(e.target.id === 'per'){
+    S.per = e.target.value;
+    S.page = 1;
+    render();
+  }
+});
+
+carregarDados();
+</script>
+</body>
+</html>
